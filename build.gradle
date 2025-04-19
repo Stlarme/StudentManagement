@@ -19,11 +19,27 @@ repositories {
 }
 
 dependencies {
+	implementation("io.projectreactor:reactor-core:3.8.0-M1")
+
+	implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+	implementation "org.apache.commons:commons-lang3:3.17.0"
+
+	//MySQLドライバ
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	//MyBatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-web'
 }
+
+
 
 tasks.named('test') {
 	useJUnitPlatform()
