@@ -2,7 +2,7 @@ package raisetech.StudentManagement;
 
 public class Student {
 
-  // フィールド名を修正
+
   private String name;
   private int age;
 
