@@ -12,38 +12,21 @@ public class StudentManagementApplication {
 
 	@Autowired
 	private StudentRepository repository;
-
-	private String name = "Enami Kouji";
-	private String age = "37";
+	@Autowired
+	private StudentCoursesRepository CoursesRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(StudentManagementApplication.class, args);
 	}
 
-	@GetMapping("/Student")
-	public String getStudent(@RequestParam String name) {
-		Student student = repository.searchByName(name);
-		return student.getName() + student.getAge() + "歳";
-	}
-
-	@PostMapping("/Student")
-	public void registerStudent(String name, int age) {
-		repository.registerStudent(name, age);
-	}
-
-	@PatchMapping("/Student")
-	public void updateStudent(String name, int age) {
-		repository.updateStudent(name, age);
-	}
-
-	@DeleteMapping("/Student")
-	public void deleteStudent(String name) {
-		repository.deleteStudent(name);
-	}
-
 	@GetMapping("/StudentList")
-	public List<Student> getAllStudents() {
-		return repository.findAll();
+	public List<Student> getStudentList() {
+		return repository.search();
+	}
+
+	@GetMapping("/StudentCourses")
+	public List<StudentCourses> getStudentsCourses() {
+		return CoursesRepository.search();
 	}
 
 }
