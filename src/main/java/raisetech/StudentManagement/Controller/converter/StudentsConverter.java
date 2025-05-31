@@ -6,16 +6,16 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
-import raisetech.StudentManagement.domain.StudentsDetail;
+import raisetech.StudentManagement.domain.StudentDetail;
 
 @Component
 public class StudentsConverter {
 
-  public List<StudentsDetail> convertStudentDetails(List<Student> students,
+  public List<StudentDetail> convertStudentDetails(List<Student> students,
       List<StudentsCourses> studentsCourses) {
-    List<StudentsDetail> studentsDetails = new ArrayList<>();
+    List<StudentDetail> studentsDetails = new ArrayList<>();
     students.forEach(student -> {
-      StudentsDetail studentsDetail = new StudentsDetail();
+      StudentDetail studentsDetail = new StudentDetail();
       studentsDetail.setStudent(student);
 
       List<StudentsCourses> convertStudentCourses = studentsCourses.stream()

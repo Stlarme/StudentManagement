@@ -24,30 +24,44 @@ repositories {
 	mavenCentral()
 }
 
+
 dependencies {
-	implementation("io.projectreactor:reactor-core:3.8.0-M1")
+		// =========================
+		// Spring Boot Starters
+		// =========================
+		implementation 'org.springframework.boot:spring-boot-starter'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	implementation 'org.springframework.boot:spring-boot-starter-tomcat'
-	implementation "org.apache.commons:commons-lang3:3.17.0"
+		// =========================
+		// Database
+		// =========================
+		runtimeOnly 'com.mysql:mysql-connector-j' // MySQL Driver
+		implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4' // MyBatis
 
-	//lombok
-	compileOnly'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+		// =========================
+		// Utility Libraries
+		// =========================
+		implementation 'org.apache.commons:commons-lang3:3.17.0'
 
-	//MySQLドライバ
-	runtimeOnly 'com.mysql:mysql-connector-j'
+		// =========================
+		// Project Reactor (Reactive Streams)
+		// =========================
+		implementation 'io.projectreactor:reactor-core:3.8.0-M1'
 
-	//MyBatis
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+		// =========================
+		// Lombok (Compile-time Only)
+		// =========================
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	providedRuntime 'org.springframework.boot:spring-boot-starter-web'
-}
+		// =========================
+		// Testing
+		// =========================
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	}
 
 
 
