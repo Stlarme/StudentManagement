@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
-  <title>受講生登録</title>
+  <title>受講生情報更新</title>
 </head>
 <body>
-<h1>受講生登録</h1>
-<form th:action="@{/registerStudent}" th:object="${studentDetail}" method="post">
- <div>
-   <label for="name">名前:</label>
-   <input type="text" id="name" th:field="*{student.name}" required/><br>
-   </div>
+<h1>受講生情報更新</h1>
+<form th:action="@{/updateStudent}" th:object="${studentDetail}" method="post">
+
+  <input type="hidden" th:field="*{student.id}" />
+
   <div>
-   <label for="kanaName">フリガナ:</label>
-   <input type="text" id="kanaName" th:field="*{student.kanaName}" required/><br>
+    <label for="name">名前:</label>
+    <input type="text" id="name" th:field="*{student.name}" required/><br>
   </div>
   <div>
-   <label for="nickname">ニックネーム:</label>
+    <label for="kanaName">フリガナ:</label>
+    <input type="text" id="kanaName" th:field="*{student.kanaName}" required/><br>
+  </div>
+  <div>
+    <label for="nickname">ニックネーム:</label>
     <input type="text" id="nickname" th:field="*{student.nickname}" required/><br>
   </div>
   <div>
@@ -36,12 +39,16 @@
     <input type="radio" th:field="*{student.gender}" value="男性" /> 男性
     <input type="radio" th:field="*{student.gender}" value="女性" /> 女性
     <input type="radio" th:field="*{student.gender}" value="その他" /> その他
-    <br>
   </div>
   <div>
     <label for="remark">備考:</label>
-   <input type="text" id="remark" th:field="*{student.remark}" />
- </div>
+    <input id="remark" th:field="*{student.remark}">
+  </div>
+
+
+  <div>
+    <input type="hidden" id="courseId" th:field="*{studentsCourses[0].id}" readonly />
+  </div>
   <div>
     <label for="courseName">コース名:</label>
     <input type="text" id="courseName" th:field="*{studentsCourses[0].courseName}" required/>
@@ -50,13 +57,15 @@
     <label for="startDate">受講開始日時:</label>
     <input type="datetime-local" id="startDate" th:field="*{studentsCourses[0].startDate}" />
   </div>
-    <div>
+  <div>
     <label for="endDate">受講終了日時:</label>
     <input type="datetime-local" id="endDate" th:field="*{studentsCourses[0].endDate}" />
   </div>
-    <div>
-    <button type="submit">登録</button>
+
+  <div>
+    <button type="submit">更新</button>
   </div>
+
 </form>
 </body>
 </html>
