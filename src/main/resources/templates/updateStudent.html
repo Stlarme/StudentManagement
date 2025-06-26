@@ -62,6 +62,9 @@
     <input type="datetime-local" id="endDate" th:field="*{studentsCourses[0].endDate}" />
   </div>
 
+  <label for="isDeleted">キャンセル（削除）:</label>
+  <input type="checkbox" id="isDeleted" th:field="*{student.isDeleted}" />
+
   <div>
     <button type="submit">更新</button>
   </div>
