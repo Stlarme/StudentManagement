@@ -94,10 +94,11 @@ public class StudentsController {
   @PostMapping("/updateStudent")
   public String updateStudent(@ModelAttribute StudentDetail studentDetail, BindingResult result) {
     if (result.hasErrors()) {
-      return "updateStudent";
+      return "editStudent";
     }
     service.updateStudent(studentDetail);
     System.out.println(studentDetail.getStudent().getName() + "さんの情報が更新されました。");
     return "redirect:/studentList";
   }
+
 }
