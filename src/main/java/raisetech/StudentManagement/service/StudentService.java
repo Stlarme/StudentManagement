@@ -57,9 +57,7 @@ public class StudentService {
 
   @Transactional
   public void updateStudent(StudentDetail studentDetail) {
-
     repository.updateStudent(studentDetail.getStudent());
-
     if (studentDetail.getStudentsCourses() != null) {
       for (StudentsCourses course : studentDetail.getStudentsCourses()) {
         repository.updateStudentsCourse(course);
