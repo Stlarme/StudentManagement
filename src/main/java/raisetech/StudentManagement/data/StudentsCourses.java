@@ -12,4 +12,10 @@ public class StudentsCourses {
   private String courseName;
   private LocalDateTime startDate;
   private LocalDateTime endDate;
+
+  public void setCourseStartAt(LocalDateTime now) {
+  }
+
+  public void setCourseEndAt(LocalDateTime localDateTime) {
+  }
 }
