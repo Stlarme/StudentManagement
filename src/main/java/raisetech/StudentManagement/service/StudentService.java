@@ -6,8 +6,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import raisetech.StudentManagement.Controller.converter.StudentsConverter;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.repository.StudentRepository;
 
@@ -18,66 +19,81 @@ import raisetech.StudentManagement.repository.StudentRepository;
 public class StudentService {
 
   private StudentRepository repository;
+  private StudentsConverter converter;
 
   @Autowired
-  public StudentService(StudentRepository repository) {
+  public StudentService(StudentRepository repository, StudentsConverter converter) {
     this.repository = repository;
+    this.converter = converter;
   }
 
   /**
    * 受講生の一覧検索 全件検索 ＠return　受講生一覧（全件）
    */
-  public List<Student> searchStudentList() {
-    return repository.search();
+  public List<StudentDetail> searchStudentList() {
+    List<Student> studentList = repository.search();
+    List<StudentCourse> studentCourseList = repository.searchStudentsCoursesList();
+    return converter.convertStudentDetails(studentList, studentCourseList);
   }
 
   /**
    * 受講生検索 IDに紐づく受講生情報を取得した後、その受講生に紐づくコース情報を取得
    *
-   * @param studentId 　受講生ID
+   * @param id 　受講生ID
    * @return 受講生情報
    */
-  public StudentDetail getStudentDetailById(String studentId) {
-    Student student = repository.findStudentById(studentId);
-    if (student == null) {
-      return null;
-    }
-    List<StudentsCourses> courses = repository.findCoursesByStudentId(studentId);
-    StudentDetail detail = new StudentDetail();
-    detail.setStudent(student);
-    detail.setStudentsCourses(courses);
-    return detail;
+  public StudentDetail searchStudent(String id) {
+    Student student = repository.searchStudent(id);
+    List<StudentCourse> studentCourse = repository.searchStudentsCourses(id);
+    return new StudentDetail(student, studentCourse);
   }
 
-  public List<StudentsCourses> searchStudentsCourseList() {
-    return repository.searchStudentsCourses();
-  }
-
+  /**
+   * 受講生詳細の登録
+   *
+   * @param studentDetail
+   * @return
+   */
   @Transactional
   public StudentDetail registerStudent(StudentDetail studentDetail) {
-    repository.insertStudent(studentDetail.getStudent());
-    List<StudentsCourses> courses = studentDetail.getStudentsCourses();
-    if (courses == null) {
-      courses = List.of();
-    }
-    for (StudentsCourses course : courses) {
-      course.setId("c-" + UUID.randomUUID().toString().substring(0, 8));
-      course.setStudentId(studentDetail.getStudent().getId());
-      course.setCourseStartAt(LocalDateTime.now());
-      course.setCourseEndAt(LocalDateTime.now().plusYears(1));
-      repository.insertStudentsCourse(course);
-    }
+    Student student = studentDetail.getStudent();
+
+    repository.registerStudent(student);
+    studentDetail.getStudentsCourseList().forEach(studentsCourses -> {
+      initStudentsCourse(studentsCourses, student);
+      repository.registerStudentsCourses(studentsCourses);
+    });
     return studentDetail;
   }
 
+  /**
+   * 登録時の初期情報
+   *
+   * @param studentCourse
+   * @param student
+   */
+  private void initStudentsCourse(StudentCourse studentCourse, Student student) {
+    LocalDateTime now = LocalDateTime.now();
+
+    studentCourse.setId("c-" + UUID.randomUUID().toString().substring(0, 8));
+    studentCourse.setStudentId(student.getId());
+    studentCourse.setCourseStartAt(now);
+    studentCourse.setCourseEndAt(now.plusYears(1));
+  }
+
+  /**
+   * 受講生詳細の更新を行う 受講開と受講コース情報をそれぞれ更新
+   *
+   * @param studentDetail 受講生詳細
+   */
   @Transactional
   public void updateStudent(StudentDetail studentDetail) {
     repository.updateStudent(studentDetail.getStudent());
-    if (studentDetail.getStudentsCourses() != null) {
-      for (StudentsCourses course : studentDetail.getStudentsCourses()) {
-        repository.updateStudentsCourse(course);
-      }
+
+    List<StudentCourse> courseList = studentDetail.getStudentsCourseList();
+    if (courseList != null) {
+      courseList.forEach(studentCourse -> repository.updateStudentsCourse(studentCourse));
     }
   }
-
 }
+
