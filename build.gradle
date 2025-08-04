@@ -1,70 +1,71 @@
 plugins {
-	id 'java'
-	id 'war'
-	id 'org.springframework.boot' version '3.4.3'
-	id 'io.spring.dependency-management' version '1.1.7'
+    id 'java'
+    id 'war'
+    id 'org.springframework.boot' version '3.4.3'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'raisetech'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 
 dependencies {
-		// =========================
-		// Spring Boot Starters
-		// =========================
-		implementation 'org.springframework.boot:spring-boot-starter'
-		implementation 'org.springframework.boot:spring-boot-starter-web'
-		implementation 'org.springframework.boot:spring-boot-starter-tomcat'
-		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    // =========================
+    // Spring Boot Starters
+    // =========================
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // =========================
+    // Database
+    // =========================
+    runtimeOnly 'com.mysql:mysql-connector-j' // MySQL Driver
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4' // MyBatis
 
-		// =========================
-		// Database
-		// =========================
-		runtimeOnly 'com.mysql:mysql-connector-j' // MySQL Driver
-		implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4' // MyBatis
+    // =========================
+    // Utility Libraries
+    // =========================
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
 
-		// =========================
-		// Utility Libraries
-		// =========================
-		implementation 'org.apache.commons:commons-lang3:3.17.0'
+    // =========================
+    // Project Reactor (Reactive Streams)
+    // =========================
+    implementation 'io.projectreactor:reactor-core:3.8.0-M1'
 
-		// =========================
-		// Project Reactor (Reactive Streams)
-		// =========================
-		implementation 'io.projectreactor:reactor-core:3.8.0-M1'
+    // =========================
+    // Lombok (Compile-time Only)
+    // =========================
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-		// =========================
-		// Lombok (Compile-time Only)
-		// =========================
-		compileOnly 'org.projectlombok:lombok'
-		annotationProcessor 'org.projectlombok:lombok'
+    // =========================
+    // Testing
+    // =========================
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-		// =========================
-		// Testing
-		// =========================
-		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	}
 
+}
 
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
