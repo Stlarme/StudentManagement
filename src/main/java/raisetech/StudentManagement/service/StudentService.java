@@ -69,8 +69,8 @@ public class StudentService {
   /**
    * 登録時の初期情報
    *
-   * @param studentCourse
-   * @param student
+   * @param studentCourse 　受講生コース情報を
+   * @param student       　受講生情報
    */
   private void initStudentsCourse(StudentCourse studentCourse, Student student) {
     LocalDateTime now = LocalDateTime.now();
