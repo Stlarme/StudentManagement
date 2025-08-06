@@ -9,7 +9,7 @@ import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 
 /**
- * nServiceから取得してオブジェクトをControllerにとって必要な形に変換するコンバーター
+ * Serviceから取得してオブジェクトをControllerにとって必要な形に変換するコンバーター
  */
 @Component
 public class StudentsConverter {
@@ -19,7 +19,7 @@ public class StudentsConverter {
    *
    * @param studentList       　受講生一覧
    * @param studentCourseList 　受講生コース情報のリスト
-   * @return　受講生詳細情報のリスト
+   * @return 受講生詳細情報のリスト
    */
   public List<StudentDetail> convertStudentDetails(List<Student> studentList,
       List<StudentCourse> studentCourseList) {

@@ -1,7 +1,8 @@
 package raisetech.StudentManagement.Controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.beans.PropertyEditorSupport;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ import raisetech.StudentManagement.service.StudentService;
  */
 @Validated
 @RestController
+@ControllerAdvice
 public class StudentsController {
 
   @InitBinder
@@ -75,7 +78,8 @@ public class StudentsController {
    * @return 受講生情詳細
    */
   @GetMapping("/Student/{id}")
-  public StudentDetail getStudent(@PathVariable @Size(min = 1, max = 3) String id) {
+  public StudentDetail getStudent(
+      @PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id) {
     return service.searchStudent(id);
   }
 
@@ -99,9 +103,13 @@ public class StudentsController {
    * @return 実行結果
    */
   @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody StudentDetail studentDetail) {
+  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
   }
 
+  @GetMapping("/test")
+  public String throwTestException() {
+    throw new RuntimeException("例外が発生しました。");
+  }
 }
