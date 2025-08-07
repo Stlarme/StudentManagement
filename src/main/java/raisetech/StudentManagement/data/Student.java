@@ -23,7 +23,6 @@ public class Student {
   private String kanaName;
 
   @NotBlank
-
   private String nickname;
 
   @NotBlank
