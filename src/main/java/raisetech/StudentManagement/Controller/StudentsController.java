@@ -1,25 +1,23 @@
 package raisetech.StudentManagement.Controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import java.beans.PropertyEditorSupport;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import raisetech.StudentManagement.Controller.converter.StudentsConverter;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
@@ -28,37 +26,13 @@ import raisetech.StudentManagement.service.StudentService;
  */
 @Validated
 @RestController
-@ControllerAdvice
 public class StudentsController {
 
-  @InitBinder
-  public void initBinder(WebDataBinder binder) {
-    binder.registerCustomEditor(LocalDateTime.class, new PropertyEditorSupport() {
-      @Override
-      public void setAsText(String text) throws IllegalArgumentException {
-        if (text == null || text.isEmpty()) {
-          setValue(null);
-        } else {
-          setValue(LocalDateTime.parse(text, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
-        }
-      }
-
-      @Override
-      public String getAsText() {
-        LocalDateTime value = (LocalDateTime) getValue();
-        return (value != null) ? value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))
-            : "";
-      }
-    });
-  }
-
   private StudentService service;
-  private StudentsConverter converter;
 
   @Autowired
-  public StudentsController(StudentService service, StudentsConverter converter) {
+  public StudentsController(StudentService service) {
     this.service = service;
-    this.converter = converter;
   }
 
   /**
@@ -66,6 +40,13 @@ public class StudentsController {
    *
    * @return 受講生一覧（全件）
    */
+  @Operation(
+      summary = "受講生一覧取得",
+      description = "全ての受講生情報を取得します。",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "成功")
+      }
+  )
   @GetMapping("/studentList")
   public List<StudentDetail> getStudentList() {
     return service.searchStudentList();
@@ -77,8 +58,17 @@ public class StudentsController {
    * @param id 　受講生ID
    * @return 受講生情詳細
    */
+  @Operation(
+      summary = "受講生取得",
+      description = "指定されたIDの受講生情報を取得します。",
+      responses = {
+          @ApiResponse(responseCode = "200", description = "成功"),
+          @ApiResponse(responseCode = "404", description = "該当データなし")
+      }
+  )
   @GetMapping("/Student/{id}")
   public StudentDetail getStudent(
+      @Parameter(description = "受講生ID")
       @PathVariable @NotBlank @Pattern(regexp = "^\\d+$") String id) {
     return service.searchStudent(id);
   }
@@ -89,6 +79,19 @@ public class StudentsController {
    * @param studentDetail 　受講生詳細
    * @return 実行結果
    */
+  @Operation(
+      summary = "受講生登録",
+      description = "受講生情報を新規登録します。",
+      requestBody = @RequestBody(
+          description = "登録する受講生情報",
+          required = true,
+          content = @Content(schema = @Schema(implementation = StudentDetail.class))
+      ),
+      responses = {
+          @ApiResponse(responseCode = "200", description = "登録成功"),
+          @ApiResponse(responseCode = "400", description = "バリデーションエラー")
+      }
+  )
   @PostMapping("/registerStudent")
   public ResponseEntity<StudentDetail> registerStudent(
       @RequestBody @Valid StudentDetail studentDetail) {
@@ -102,12 +105,33 @@ public class StudentsController {
    * @param studentDetail 　受講生詳細
    * @return 実行結果
    */
+  @Operation(
+      summary = "受講生更新",
+      description = "既存の受講生情報を更新します。",
+      requestBody = @RequestBody(
+          description = "更新する受講生情報",
+          required = true,
+          content = @Content(schema = @Schema(implementation = StudentDetail.class))
+      ),
+      responses = {
+          @ApiResponse(responseCode = "200", description = "更新成功"),
+          @ApiResponse(responseCode = "404", description = "対象データなし")
+      }
+  )
   @PutMapping("/updateStudent")
-  public ResponseEntity<String> updateStudent(@RequestBody @Valid StudentDetail studentDetail) {
+  public ResponseEntity<String> updateStudent(
+      @RequestBody @Valid StudentDetail studentDetail) {
     service.updateStudent(studentDetail);
     return ResponseEntity.ok("更新処理が成功しました。");
   }
 
+  @Operation(
+      summary = "例外テスト",
+      description = "常に例外を発生させるテスト用APIです。",
+      responses = {
+          @ApiResponse(responseCode = "500", description = "強制例外発生")
+      }
+  )
   @GetMapping("/test")
   public String throwTestException() {
     throw new RuntimeException("例外が発生しました。");
