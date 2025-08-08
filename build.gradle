@@ -24,50 +24,35 @@ repositories {
     mavenCentral()
 }
 
-
 dependencies {
-    // =========================
     // Spring Boot Starters
-    // =========================
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    // =========================
+
     // Database
-    // =========================
-    runtimeOnly 'com.mysql:mysql-connector-j' // MySQL Driver
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4' // MyBatis
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
 
     //OpenAPI generator
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9'
 
-    // =========================
     // Utility Libraries
-    // =========================
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
 
-    // =========================
     // Project Reactor (Reactive Streams)
-    // =========================
     implementation 'io.projectreactor:reactor-core:3.8.0-M1'
 
-    // =========================
     // Lombok (Compile-time Only)
-    // =========================
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // =========================
     // Testing
-    // =========================
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-
 }
-
 
 tasks.named('test') {
     useJUnitPlatform()
