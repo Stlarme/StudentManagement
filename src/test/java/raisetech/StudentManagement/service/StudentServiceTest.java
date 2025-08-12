@@ -39,16 +39,17 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細の一覧検索_全件検索が動作すること() {
-    Student student = new Student();
-    student.setId("test-001");
-    student.setName("テスト太郎");
+    Student student = new Student(
+        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+        "taro@example.com", "東京", 20, "男性", "備考", false
+    );
 
     List<Student> studentList = List.of(student);
 
-    StudentCourse course = new StudentCourse();
-    course.setId("c-001");
-    course.setStudentId("Test-001");
-    course.setCourseName("Javaスタンダード");
+    StudentCourse course = new StudentCourse(
+        "c-001", "Test-001", "Javaスタンダード",
+        null, null
+    );
 
     List<StudentCourse> studentCourseList = List.of(course);
 
@@ -57,8 +58,8 @@ class StudentServiceTest {
 
     when(repository.search()).thenReturn(studentList);
     when(repository.searchStudentsCoursesList()).thenReturn(studentCourseList);
-    when(converter.convertStudentDetails(studentList, studentCourseList)).thenReturn(
-        expectedDetailList);
+    when(converter.convertStudentDetails(studentList, studentCourseList))
+        .thenReturn(expectedDetailList);
 
     List<StudentDetail> actual = sut.searchStudentList();
 
@@ -69,22 +70,14 @@ class StudentServiceTest {
     assertEquals(expectedDetailList, actual);
   }
 
-
   @Test
   void 受講生詳細の検索_IDで検索が動作すること() {
     String id = "test-001";
 
-    Student student = new Student();
-    student.setId(id);
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("タロウ");
-    student.setEmail("taro@example.com");
-    student.setRegion("東京");
-    student.setAge(20);
-    student.setGender("男性");
-    student.setRemark("備考");
-    student.setIsDeleted(false);
+    Student student = new Student(
+        id, "テスト太郎", "テストタロウ", "タロウ",
+        "taro@example.com", "東京", 20, "男性", "備考", false
+    );
 
     List<StudentCourse> studentCourses = new ArrayList<>();
 
@@ -101,19 +94,17 @@ class StudentServiceTest {
     assertEquals(expected, actual);
   }
 
-
   @Test
   void 受講生詳細の登録_登録処理が正常に動作すること() {
-    Student student = new Student();
-    student.setId("test-001");
-    student.setName("テスト太郎");
+    Student student = new Student(
+        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+        "taro@example.com", "東京", 20, "男性", "備考", false
+    );
 
-    StudentCourse studentCourse = new StudentCourse();
-    studentCourse.setId("c-001");
-    studentCourse.setStudentId("test-001");
-    studentCourse.setCourseName("Javaスタンダード");
-    studentCourse.setCourseStartAt(LocalDateTime.now());
-    studentCourse.setCourseEndAt(LocalDateTime.now().plusYears(1));
+    StudentCourse studentCourse = new StudentCourse(
+        "c-001", "test-001", "Javaスタンダード",
+        LocalDateTime.now(), LocalDateTime.now().plusYears(1)
+    );
 
     List<StudentCourse> studentCourseList = List.of(studentCourse);
     StudentDetail studentDetail = new StudentDetail(student, studentCourseList);
@@ -124,21 +115,19 @@ class StudentServiceTest {
     verify(repository, times(1)).registerStudentsCourses((StudentCourse) studentCourseList);
   }
 
-
   @Test
   void 受講生詳細の更新_受講生とコース情報の更新が正常に動作すること() {
-    Student student = new Student();
-    student.setId("test-001");
+    Student student = new Student(
+        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+        "taro@example.com", "東京", 20, "男性", "備考", false
+    );
 
-    StudentCourse course1 = new StudentCourse();
-    course1.setId("c-001");
-    course1.setStudentId("test-001");
-    course1.setCourseName("Javaスタンダード");
-
-    StudentCourse course2 = new StudentCourse();
-    course2.setId("c-002");
-    course2.setStudentId("test-001");
-    course2.setCourseName("Javaベーシック");
+    StudentCourse course1 = new StudentCourse(
+        "c-001", "test-001", "Javaスタンダード", null, null
+    );
+    StudentCourse course2 = new StudentCourse(
+        "c-002", "test-001", "Javaベーシック", null, null
+    );
 
     List<StudentCourse> courseList = List.of(course1, course2);
     StudentDetail studentDetail = new StudentDetail(student, courseList);
@@ -150,11 +139,12 @@ class StudentServiceTest {
     verify(repository, times(1)).updateStudentsCourse(course2);
   }
 
-
   @Test
   void 学生コース初期化処理が正しく動作すること() {
-    Student student = new Student();
-    student.setId("test-001");
+    Student student = new Student(
+        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+        "taro@example.com", "東京", 20, "男性", "備考", false
+    );
 
     StudentCourse studentCourse = new StudentCourse();
 
@@ -167,5 +157,4 @@ class StudentServiceTest {
     assertNotNull(studentCourse.getCourseEndAt());
     assertTrue(studentCourse.getCourseEndAt().isAfter(studentCourse.getCourseStartAt()));
   }
-
 }
