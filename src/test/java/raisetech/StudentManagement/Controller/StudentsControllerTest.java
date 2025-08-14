@@ -2,6 +2,7 @@ package raisetech.StudentManagement.Controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,7 +11,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -34,9 +34,6 @@ class studentsControllerTest {
   @MockBean
   private StudentService service;
 
-  @Autowired
-  private ObjectMapper objectMapper;
-
   private Validator validator;
 
   @BeforeEach
@@ -54,15 +51,24 @@ class studentsControllerTest {
 
   @Test
   void 受講生検索で該当IDの受講生情報が取得できること() throws Exception {
-    String id = "test-001";
-    mockMvc.perform(get("/student/{id]", id))
+    String id = "1000";
+    mockMvc.perform(get("/Student/{id}", id))
         .andExpect(status().isOk());
 
     verify(service, times(1)).searchStudent(id);
   }
 
   @Test
-  void 受講生登録が成功すること() throws Exception {
+  void 受講生検索でIDに数値以外を渡した場合に入力チェックエラーとなること() throws Exception {
+    String invalidId = "test-001";
+    mockMvc.perform(get("/student/{id}", invalidId))
+        .andExpect(status().isBadRequest());
+
+    verify(service, times(0)).searchStudent(anyString());
+  }
+
+  @Test
+  void 受講生登録が実行できて空で返ってくること() throws Exception {
     mockMvc.perform(post("/registerStudent").contentType(MediaType.APPLICATION_JSON).content(
             """
                 {
@@ -122,27 +128,21 @@ class studentsControllerTest {
         ))
         .andExpect(status().isOk());
 
-    verify(service, times(1)).registerStudent(any());
+    verify(service, times(1)).updateStudent(any());
   }
 
   @Test
   void 受講生詳細の例外APIが実行できてステータスが400で返ってくること() throws Exception {
-    mockMvc.perform(get("/test)"))
+    mockMvc.perform(get("/test"))
         .andExpect(status().is4xxClientError())
-        .andExpect(content().string("このAPIは現在利用できません。古いURLとなっています。"));
+        .andExpect(content().string("例外が発生しました。"));
 
   }
 
   @Test
   void 受講生詳細の受講生で適切な値を入力したときに入力チェックで異常が発生しないこと() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -151,14 +151,9 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の受講生IDに数字以外を用いた際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("テストです");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("test", "テスト太郎", "テストタロウ", "タロウ",
+        "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -169,14 +164,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の氏名が空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "", "テストタロウ", "タロウ", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -184,15 +173,9 @@ class studentsControllerTest {
   }
 
   @Test
-  void 受講生詳細のカナ氏名に全角カナ以外を用いた際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("てすとたろう");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+  void 受講生詳細のカナ氏名が空白の際に入力チェックがかかること() {
+    Student student = new Student("100", "テスト太郎", "", "タロウ", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -201,14 +184,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細のニックネームが空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -217,14 +194,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細のメールアドレスの形式が不正な際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("invalid-email");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "test-example",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -233,14 +204,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の地域が空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "taro@example.com",
+        "", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -249,14 +214,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の性別が空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "taro@example.com",
+        "東京", 20, "", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
