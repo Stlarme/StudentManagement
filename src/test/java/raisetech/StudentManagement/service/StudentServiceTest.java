@@ -40,14 +40,14 @@ class StudentServiceTest {
   @Test
   void 受講生詳細の一覧検索_全件検索が動作すること() {
     Student student = new Student(
-        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+        "100", "テスト太郎", "テストタロウ", "タロウ",
         "taro@example.com", "東京", 20, "男性", "備考", false
     );
 
     List<Student> studentList = List.of(student);
 
     StudentCourse course = new StudentCourse(
-        "c-001", "Test-001", "Javaスタンダード",
+        "100", "100", "Javaスタンダード",
         null, null
     );
 
@@ -72,10 +72,11 @@ class StudentServiceTest {
 
   @Test
   void 受講生詳細の検索_IDで検索が動作すること() {
-    String id = "test-001";
+    String id = "100";
 
     Student student = new Student(
-        id, "テスト太郎", "テストタロウ", "タロウ",
+        id,
+        "テスト太郎", "テストタロウ", "タロウ",
         "taro@example.com", "東京", 20, "男性", "備考", false
     );
 
@@ -83,26 +84,28 @@ class StudentServiceTest {
 
     StudentDetail expected = new StudentDetail(student, studentCourses);
 
-    when(repository.searchStudent(id)).thenReturn(student);
-    when(repository.searchStudentsCourses(id)).thenReturn(studentCourses);
+    // int を String に変換して渡す必要がある場合
+    when(repository.searchStudent(String.valueOf(id))).thenReturn(student);
+    when(repository.searchStudentsCourses(String.valueOf(id))).thenReturn(studentCourses);
 
-    StudentDetail actual = sut.searchStudent(id);
+    StudentDetail actual = sut.searchStudent(String.valueOf(id));
 
-    verify(repository, times(1)).searchStudent(id);
-    verify(repository, times(1)).searchStudentsCourses(id);
+    verify(repository, times(1)).searchStudent(String.valueOf(id));
+    verify(repository, times(1)).searchStudentsCourses(String.valueOf(id));
 
     assertEquals(expected, actual);
   }
 
+
   @Test
   void 受講生詳細の登録_登録処理が正常に動作すること() {
     Student student = new Student(
-        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+        "100", "テスト太郎", "テストタロウ", "タロウ",
         "taro@example.com", "東京", 20, "男性", "備考", false
     );
 
     StudentCourse studentCourse = new StudentCourse(
-        "c-001", "test-001", "Javaスタンダード",
+        "100", "100", "Javaスタンダード",
         LocalDateTime.now(), LocalDateTime.now().plusYears(1)
     );
 
@@ -112,21 +115,24 @@ class StudentServiceTest {
     sut.registerStudent(studentDetail);
 
     verify(repository, times(1)).registerStudent(student);
-    verify(repository, times(1)).registerStudentsCourses((StudentCourse) studentCourseList);
+    for (StudentCourse course : studentCourseList) {
+      verify(repository, times(1)).registerStudentsCourses(course);
+    }
+
   }
 
   @Test
   void 受講生詳細の更新_受講生とコース情報の更新が正常に動作すること() {
     Student student = new Student(
-        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+        "100", "テスト太郎", "テストタロウ", "タロウ",
         "taro@example.com", "東京", 20, "男性", "備考", false
     );
 
     StudentCourse course1 = new StudentCourse(
-        "c-001", "test-001", "Javaスタンダード", null, null
+        "100", "100", "Javaスタンダード", null, null
     );
     StudentCourse course2 = new StudentCourse(
-        "c-002", "test-001", "Javaベーシック", null, null
+        "100", "100", "Javaベーシック", null, null
     );
 
     List<StudentCourse> courseList = List.of(course1, course2);
@@ -141,20 +147,26 @@ class StudentServiceTest {
 
   @Test
   void 学生コース初期化処理が正しく動作すること() {
-    Student student = new Student(
-        "test-001", "テスト太郎", "テストタロウ", "タロウ",
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ",
         "taro@example.com", "東京", 20, "男性", "備考", false
     );
 
-    StudentCourse studentCourse = new StudentCourse();
+    StudentCourse studentCourse = new StudentCourse(
+        "100",
+        "100",
+        "Javaスタンダード",
+        LocalDateTime.now(),
+        LocalDateTime.now().plusYears(1)
+    );
 
     sut.initStudentsCourse(studentCourse, student);
 
     assertNotNull(studentCourse.getId());
-    assertTrue(studentCourse.getId().startsWith("c-"));
-    assertEquals("test-001", studentCourse.getStudentId());
+    assertEquals("100", studentCourse.getStudentId());
     assertNotNull(studentCourse.getCourseStartAt());
     assertNotNull(studentCourse.getCourseEndAt());
     assertTrue(studentCourse.getCourseEndAt().isAfter(studentCourse.getCourseStartAt()));
   }
+
+
 }

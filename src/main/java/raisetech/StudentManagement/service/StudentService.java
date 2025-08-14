@@ -2,7 +2,6 @@ package raisetech.StudentManagement.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -75,7 +74,6 @@ public class StudentService {
   void initStudentsCourse(StudentCourse studentCourse, Student student) {
     LocalDateTime now = LocalDateTime.now();
 
-    studentCourse.setId("c-" + UUID.randomUUID().toString().substring(0, 8));
     studentCourse.setStudentId(student.getId());
     studentCourse.setCourseStartAt(now);
     studentCourse.setCourseEndAt(now.plusYears(1));

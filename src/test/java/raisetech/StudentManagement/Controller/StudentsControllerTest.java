@@ -141,14 +141,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の受講生で適切な値を入力したときに入力チェックで異常が発生しないこと() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -157,14 +151,9 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の受講生IDに数字以外を用いた際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("テストです");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("test", "テスト太郎", "テストタロウ", "タロウ",
+        "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -175,14 +164,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の氏名が空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "", "テストタロウ", "タロウ", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -191,14 +174,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細のカナ氏名が空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "", "タロウ", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -207,14 +184,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細のニックネームが空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "", "taro@example.com",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -223,14 +194,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細のメールアドレスの形式が不正な際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("invalid-email");
-    student.setRegion("テスト県");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "test-example",
+        "東京", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -239,14 +204,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の地域が空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("");
-    student.setGender("男性");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "taro@example.com",
+        "", 20, "男性", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
@@ -255,14 +214,8 @@ class studentsControllerTest {
 
   @Test
   void 受講生詳細の性別が空白の際に入力チェックがかかること() {
-    Student student = new Student();
-    student.setId("12345");
-    student.setName("テスト太郎");
-    student.setKanaName("テストタロウ");
-    student.setNickname("テスト");
-    student.setEmail("test@example.com");
-    student.setRegion("テスト県");
-    student.setGender("");
+    Student student = new Student("100", "テスト太郎", "テストタロウ", "タロウ", "taro@example.com",
+        "東京", 20, "", "備考", false);
 
     Set<ConstraintViolation<Student>> violations = validator.validate(student);
 
